@@ -2,10 +2,12 @@ package com.springboot.sbecom.controller
 
 import com.springboot.sbecom.model.Category
 import com.springboot.sbecom.service.CategoryService
+import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -29,19 +31,15 @@ class CategoryController @Autowired constructor(val categoryService: CategorySer
     }
 
     @PostMapping("api/public/category")
-    fun createCategory(@RequestBody category: Category): ResponseEntity<String> {
+    fun createCategory(@Valid @RequestBody category: Category): ResponseEntity<String> {
         categoryService.createCategory(category = category)
         return ResponseEntity("Category added successfully!", HttpStatus.CREATED)
     }
 
     @DeleteMapping("api/admin/category/{categoryId}")
     fun deleteCategory(@PathVariable categoryId: Long): ResponseEntity<String> {
-        try {
-            val status = categoryService.deleteCategory(id = categoryId)
-            return ResponseEntity(status, HttpStatus.OK)
-        }catch (ex: ResponseStatusException) {
-            return ResponseEntity(ex.reason, HttpStatus.NOT_FOUND)
-        }
+        val status = categoryService.deleteCategory(id = categoryId)
+        return ResponseEntity(status, HttpStatus.OK)
     }
 
     @PutMapping("api/public/category/{categoryId}")
